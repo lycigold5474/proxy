@@ -1,9 +1,6 @@
 package hello.proxy.jdkdynamic;
 
-import hello.proxy.jdkdynamic.code.AImpl;
-import hello.proxy.jdkdynamic.code.AInterface;
-import hello.proxy.jdkdynamic.code.BInterface;
-import hello.proxy.jdkdynamic.code.TimeInvocationHandler;
+import hello.proxy.jdkdynamic.code.*;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +24,7 @@ public class JdkDynamicProxyTest {
 
     @Test
     void dynamicB() {
-        AInterface target = new AImpl();
+        BInterface target = new BImpl();
         //공통로직을 실행할 로직 호출
         TimeInvocationHandler handler = new TimeInvocationHandler(target);
         //프록시생성
