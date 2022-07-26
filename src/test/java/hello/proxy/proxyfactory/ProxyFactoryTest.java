@@ -1,6 +1,7 @@
 package hello.proxy.proxyfactory;
 
 import hello.proxy.common.advice.TimeAdvice;
+import hello.proxy.common.service.ConcreteService;
 import hello.proxy.common.service.ServiceImpl;
 import hello.proxy.common.service.ServiceInterface;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +29,44 @@ public class ProxyFactoryTest {
 
         assertThat(AopUtils.isAopProxy(proxy)).isTrue();
         assertThat(AopUtils.isJdkDynamicProxy(proxy)).isTrue();
-        assertThat(AopUtils.isCglibProxy(proxy)).isTrue();  // 인터페이스기반이 아니므로 false
+        assertThat(AopUtils.isCglibProxy(proxy)).isFalse();  // 인터페이스기반이 아니므로 false
 
+    }
+
+    @Test
+    @DisplayName("구체 클래스만 있으면 CGLIB 사용")
+    void concreteProxy() {
+        ConcreteService target = new ConcreteService();
+        ProxyFactory proxyFactory = new ProxyFactory(target);
+        proxyFactory.addAdvice(new TimeAdvice());
+        ConcreteService proxy = (ConcreteService) proxyFactory.getProxy();
+        log.info("targetClass={}", target.getClass());
+        log.info("proxyClass={}", target.getClass());
+
+        proxy.call();
+
+        assertThat(AopUtils.isAopProxy(proxy)).isTrue();
+        assertThat(AopUtils.isJdkDynamicProxy(proxy)).isFalse(); // 구체클래스기반이 아니므로 false
+        assertThat(AopUtils.isCglibProxy(proxy)).isTrue();
+
+    }
+
+    @Test
+    @DisplayName("ProxyTargetClass 옵션을 사용하면 인터페이스가 있어도 CGLIB를 사용하고, 클래스 기반 프록시 사용")
+    void proxyTargetClass() {
+        ServiceInterface target = new ServiceImpl();
+        ProxyFactory proxyFactory = new ProxyFactory(target);
+        //옵션추가
+        proxyFactory.setProxyTargetClass(true); //항상 cglib기반으로 함
+        proxyFactory.addAdvice(new TimeAdvice());
+        ServiceInterface proxy = (ServiceInterface) proxyFactory.getProxy();
+        log.info("targetClass={}", target.getClass());
+        log.info("proxyClass={}", target.getClass());
+
+        proxy.save();
+
+        assertThat(AopUtils.isAopProxy(proxy)).isTrue();
+        assertThat(AopUtils.isJdkDynamicProxy(proxy)).isFalse();  //false
+        assertThat(AopUtils.isCglibProxy(proxy)).isTrue();  //옵션으로 cglib사용
     }
 }
