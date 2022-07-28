@@ -54,3 +54,7 @@
 * 빈저장소에 등록하기 직전에 조작하고 싶을때 빈 후처리기를 사용 
 * BeanPostProcessor
 * 객체 조작 또는 교체도 가능함
+* postProcessBeforeInitialization : 객체 생성 이후에 @PostConstruct 같은 초기화가 발생하기전에 호출하여 처리
+* postProcessAfterInitialization : 객체 생성 이후에 @PostConstruct 같은 초기화가 발생한 다음에 호출하여 처리
+* 컴포턴트 스캔의 대상이 되는 빈들은 중간에 조작할 방법이 없는데 빈 후처리기를 사용하면 빈을 중간에 조작 할 수 있다.
+* 스프링자체적으로 후처리기가 자동등록되어 @PostConstruct 붙은 메서드를 호출
